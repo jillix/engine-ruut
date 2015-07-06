@@ -2,6 +2,7 @@ var Ruut = require("./lib/ruut");
 
 exports.init = function () {
     var config = this._config;
+    config.autocheck = config.autocheck === undefined ? true : config.autocheck;
     config.routes = config.routes || [];
     var stream = this.flow("route");
 
@@ -9,10 +10,7 @@ exports.init = function () {
         var res = obj[key];
         if (typeof res === "string") {
             obj[key] = function (params) {
-                console.log(">>> ", res, params);
-                //stream.write(null, {
-                //    params: params
-                //});
+                engine.load(res);
             };
         }
     }
@@ -39,10 +37,12 @@ exports.init = function () {
     normalize(config, "routes");
 
     this.router = Ruut(config.routes);
+
+    if (config.autocheck) {
+        this.check();
+    }
 };
 
 exports.check = function (str) {
-    str.data(function (err, data) {
-
-    });
-}
+    this.router(str || location.pathname);
+};
