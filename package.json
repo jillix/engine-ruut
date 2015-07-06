@@ -1,0 +1,11 @@
+{
+    "name": "engine-ruut",
+    "composition": {
+        "client": {
+            "module": [
+                "client/index.js",
+                "client/lib/ruut.js"
+            ]
+        }
+    }
+}
