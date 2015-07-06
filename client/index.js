@@ -10,7 +10,9 @@ exports.init = function () {
         var res = obj[key];
         if (typeof res === "string") {
             obj[key] = function (params) {
-                engine.load(res);
+                stream.write(null, {
+                    params: params
+                });
             };
         }
     }
