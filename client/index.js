@@ -8,7 +8,7 @@ exports.init = function () {
     function handler(obj, key) {
         var res = obj[key];
         if (typeof res === "string") {
-            key[obj] = function (params) {
+            obj[key] = function (params) {
                 console.log(">>> ", res, params);
                 //stream.write(null, {
                 //    params: params
@@ -29,7 +29,7 @@ exports.init = function () {
         } else {
             Object.keys(route).forEach(function (key) {
                 if (typeof route[key] === "object") {
-                    return normalize(route[key], route, key);
+                    return normalize(route, key);
                 }
                 handler(route, key);
             });
