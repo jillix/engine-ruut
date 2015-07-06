@@ -1,5 +1,6 @@
 {
     "name": "engine-ruut",
+    "version": "1.0.0",
     "composition": {
         "client": {
             "module": [
