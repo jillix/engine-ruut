@@ -1,16 +1,21 @@
 var Ruut = require("./lib/ruut");
 
 exports.init = function () {
+
+    var self = this;
     var config = this._config;
+
     config.autocheck = config.autocheck === undefined ? true : config.autocheck;
     config.routes = config.routes || [];
-    var stream = this.flow("route");
+
+    var streams = this._streams = {};
 
     function handler(obj, key) {
         var res = obj[key];
         if (typeof res === "string") {
             obj[key] = function (params) {
-                stream.write(null, {
+                var str = self._streams[res] || (self._streams[res] = self.flow(res));
+                str.write(null, {
                     params: params
                 });
             };
