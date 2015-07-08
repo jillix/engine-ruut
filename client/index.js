@@ -1,5 +1,10 @@
 var Ruut = require("./lib/ruut");
 
+function emitRoute(route, data) {
+    var self = this;
+    var str = self._streams[route] || (self._streams[route] = self.flow(route));
+    str.write(null, data);
+}
 
 exports.init = function () {
 
@@ -15,12 +20,10 @@ exports.init = function () {
         var res = obj[key];
         if (typeof res === "string") {
             obj[key] = function (params) {
-                var str = self._streams[res] || (self._streams[res] = self.flow(res));
-                setTimeout(function() {
-                    str.write(null, {
-                        params: params
-                    });
-                }, 0);
+                emitRoute.call(self, res, {
+                    params: params
+                });
+                return true;
             };
         }
     }
@@ -56,7 +59,9 @@ exports.init = function () {
 };
 
 exports.check = function (str) {
-    this.router(str || location.pathname);
+    if (!this.router(str || location.pathname)) {
+        emitRoute.call(this, this._config.notFound || "__404", {});
+    }
 };
 
 exports.route = function (str) {
