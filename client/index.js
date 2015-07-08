@@ -1,5 +1,6 @@
 var Ruut = require("./lib/ruut");
 
+
 exports.init = function () {
 
     var self = this;
@@ -15,9 +16,11 @@ exports.init = function () {
         if (typeof res === "string") {
             obj[key] = function (params) {
                 var str = self._streams[res] || (self._streams[res] = self.flow(res));
-                str.write(null, {
-                    params: params
-                });
+                setTimeout(function() {
+                    str.write(null, {
+                        params: params
+                    });
+                }, 0);
             };
         }
     }
@@ -48,8 +51,18 @@ exports.init = function () {
     if (config.autocheck) {
         this.check();
     }
+
+    global.addEventListener("popstate", self.check.bind(self, null));
 };
 
 exports.check = function (str) {
     this.router(str || location.pathname);
+};
+
+exports.route = function (str) {
+    var self = this;
+    str.data(function (err, data) {
+        global.history.pushState(0, 0, data.url);
+        self.check();
+    });
 };
