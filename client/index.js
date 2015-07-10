@@ -3,11 +3,11 @@ var Ruut = require("./lib/ruut");
 function emitRoute(route, data) {
     var self = this;
     var str = self._streams[route] || (self._streams[route] = self.flow(route));
-    var _data = {};
+    data = Object(data);
     Object.keys(self._config.customData).forEach(function (c) {
-        _data = data[c] || self._config.customData[c]
+        data[c] = data[c] || self._config.customData[c];
     });
-    str.write(null, _data);
+    str.write(null, data);
 }
 
 exports.init = function () {
