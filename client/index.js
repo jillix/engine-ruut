@@ -3,17 +3,17 @@ var Ruut = require("./lib/ruut");
 function emitRoute(route, data) {
     var self = this;
     var str = self._streams[route] || (self._streams[route] = self.flow(route));
-    str.write(null, data);
+    var _data = {};
+    Object.keys(self._config.customData).forEach(function (c) {
+        _data = data[c] || self._config.customData[c]
+    });
+    str.write(null, _data);
 }
 
 exports.init = function () {
 
     var self = this;
     var config = this._config;
-
-    config.autocheck = config.autocheck === undefined ? true : config.autocheck;
-    config.routes = config.routes || [];
-
     var streams = this._streams = {};
 
     function handler(obj, key) {

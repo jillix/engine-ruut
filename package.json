@@ -6,7 +6,12 @@
             "module": [
                 "client/index.js",
                 "client/lib/ruut.js"
-            ]
+            ],
+            "config": {
+                "routes": {},
+                "autocheck": true,
+                "customData": {}
+            }
         }
     }
 }
