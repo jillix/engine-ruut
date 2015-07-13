@@ -17,7 +17,7 @@ exports.init = function () {
     var streams = this._streams = {};
 
     this._originalRoutes = JSON.parse(JSON.stringify(config.routes));
-    this._originalRouter = Ruut(config._originalRoutes);
+    this._originalRouter = Ruut(this._originalRoutes);
 
     function handler(obj, key) {
         var res = obj[key];
