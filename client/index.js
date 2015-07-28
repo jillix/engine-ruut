@@ -76,5 +76,5 @@ exports.route = function (data, stream, forceRoute) {
     data.url = forceRoute || data.url;
 
     global.history.pushState(0, 0, data.url);
-    self.check();
+    this.check();
 };
