@@ -67,19 +67,14 @@ exports.check = function (str) {
     }
 };
 
-// TODO make a data handler out of it, then configs like this are possible:
-/*
-  [
-      "event",
-      "instance/method",
-      ["!route", "error/route"],
-      [":route", "success/route"]
-  ]
-*/
-exports.route = function (str) {
-    var self = this;
-    str.data(function (data) {
-        global.history.pushState(0, 0, data.url);
-        self.check();
-    });
+exports.route = function (data, stream, forceRoute) {
+
+    if (typeof data === 'string') {
+        data = {url: data};
+    }
+
+    data.url = forceRoute || data.url;
+
+    global.history.pushState(0, 0, data.url);
+    self.check();
 };
