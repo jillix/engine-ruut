@@ -67,10 +67,14 @@ exports.check = function (str) {
     }
 };
 
-exports.route = function (str) {
-    var self = this;
-    str.data(function (err, data) {
-        global.history.pushState(0, 0, data.url);
-        self.check();
-    });
+exports.route = function (data, stream, forceRoute) {
+
+    if (typeof data === 'string') {
+        data = {url: data};
+    }
+
+    data.url = forceRoute || data.url;
+
+    global.history.pushState(0, 0, data.url);
+    self.check();
 };
