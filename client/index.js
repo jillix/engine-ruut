@@ -76,5 +76,11 @@ exports.route = function (data, stream, forceRoute) {
     data.url = forceRoute || data.url;
 
     global.history.pushState(0, 0, data.url);
+
+    // do not emit the new route if noEmit option provided
+    if (data.noEmit) {
+        return;
+    }
+
     this.check();
 };
