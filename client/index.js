@@ -21,8 +21,8 @@ function check (str) {
 
 function routeDefOptions (options, data) {
     var routeOptions = {
-        url: null;
-        noEmit: false;
+        url: null,
+        noEmit: false
     };
 
     if (typeof data === "string") {
