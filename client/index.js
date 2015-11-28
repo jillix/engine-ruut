@@ -2,6 +2,7 @@ var Ruut = require("./lib/ruut");
 
 function emitRoute(route, data) {
     var self = this;
+
     var str = self._streams[route] || (self._streams[route] = self.flow(route));
     data = Object(data);
     Object.keys(self._config.customData).forEach(function (c) {
@@ -10,14 +11,43 @@ function emitRoute(route, data) {
     str.write(null, data);
 }
 
+function check (str) {
+    var self = this;
+
+    if (!self.router(str || location.pathname)) {
+        emitRoute.call(self, self._config.notFound || "__404", {});
+    }
+};
+
+function routeDefOptions (options, data) {
+    var routeOptions = {
+        url: null;
+        noEmit: false;
+    };
+
+    if (typeof data === "string") {
+        data.url = data;
+    }
+    if (typeof options === "string") {
+        options.url = options;
+    }
+
+    for (var option in routeOptions) {
+        var optionValue = options[option] || data[option];
+        routeOptions[option] = optionValue || routeOptions[option];
+    }
+
+    return routeOptions;
+}
+
 exports.init = function () {
 
     var self = this;
-    var config = this._config;
-    var streams = this._streams = {};
+    var config = self._config;
+    var streams = self._streams = {};
 
-    this._originalRoutes = JSON.parse(JSON.stringify(config.routes));
-    this._originalRouter = Ruut(this._originalRoutes);
+    self._originalRoutes = JSON.parse(JSON.stringify(config.routes));
+    self._originalRouter = Ruut(self._originalRoutes);
 
     function handler(obj, key) {
         var res = obj[key];
@@ -52,35 +82,32 @@ exports.init = function () {
 
     normalize(config, "routes");
 
-    this.router = Ruut(config.routes);
+    self.router = Ruut(config.routes);
 
     if (config.autocheck) {
-        this.check();
+        check.call(self);
     }
 
     global.addEventListener("popstate", self.check.bind(self, null));
 };
 
-exports.check = function (str) {
-    if (!this.router(str || location.pathname)) {
-        emitRoute.call(this, this._config.notFound || "__404", {});
-    }
-};
+exports.route = function (_options, data, next) {
+    var self = this;
 
-exports.route = function (data, stream, forceRoute) {
+    // get the route options
+    var options = routeDefOptions(_options, data);
 
-    if (typeof data === 'string') {
-        data = {url: data};
+    if (!options.url) {
+        return next(null, data);
     }
 
-    data.url = forceRoute || data.url;
-
-    global.history.pushState(0, 0, data.url);
+    global.history.pushState(0, 0, options.url);
 
     // do not emit the new route if noEmit option provided
-    if (data.noEmit) {
-        return;
+    if (options.noEmit) {
+        return next(null, data);
     }
 
-    this.check();
+    check.call(self);
+    next(null, data);
 };
