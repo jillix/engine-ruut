@@ -88,7 +88,7 @@ exports.init = function () {
         check.call(self);
     }
 
-    global.addEventListener("popstate", self.check.bind(self, null));
+    global.addEventListener("popstate", check.bind(self, null));
 };
 
 exports.route = function (_options, data, next) {
