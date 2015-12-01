@@ -29,6 +29,13 @@ function routeDefOptions (options, data) {
     return routeOptions;
 }
 
+/**
+ * Initialize the module.
+ *
+ * @private
+ * @param {object} The config object.
+ * @param {function} The ready function.
+*/
 exports.init = function (config, ready) {
     var self = this;
 
@@ -56,6 +63,14 @@ exports.init = function (config, ready) {
     }
 };
 
+/**
+ * Emit a new route
+ *
+ * @public
+ * @param {object} The _options object.
+ * @param {object} The data function.
+ * @param {function} The next function.
+*/
 exports.route = function (_options, data, next) {
     var self = this;
 
