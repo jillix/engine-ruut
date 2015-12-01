@@ -1,17 +1,19 @@
 {
     "name": "engine-ruut",
-    "version": "1.0.0",
-    "composition": {
-        "client": {
-            "module": [
-                "client/index.js",
-                "client/lib/ruut.js"
-            ],
-            "config": {
-                "routes": {},
-                "autocheck": true,
-                "customData": {}
-            }
-        }
-    }
+    "version": "0.1.0",
+    "description": "Handle engine routes",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/jillix/engine-ruut.git"
+    },
+    "keywords": [
+        "jxengine",
+        "routes"
+    ],
+    "author": "jillix",
+    "bugs": {
+        "url": "https://github.com/jillix/engine-ruut/issues"
+    },
+    "homepage": "https://github.com/jillix/engine-ruut",
+    "main": "index.js"
 }
