@@ -15,12 +15,5 @@
         "url": "https://github.com/jillix/engine-ruut/issues"
     },
     "homepage": "https://github.com/jillix/engine-ruut",
-    "main": "client/index.js",
-    "composition": {
-        "config": {
-            "routes": {},
-            "autocheck": true,
-            "customData": {}
-        }
-    }
+    "main": "index.js"
 }

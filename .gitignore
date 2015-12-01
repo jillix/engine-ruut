@@ -2,5 +2,6 @@
 *.swo
 *~
 *.log
+.DS_Store
 node_modules
 bundle.js
