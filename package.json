@@ -16,7 +16,6 @@
   },
   "homepage": "https://github.com/jillix/engine-ruut",
   "main": "index.js",
-  "browser": "client.js",
   "dependencies": {
     "ruut": "github:jillix/ruut.js"
   },
