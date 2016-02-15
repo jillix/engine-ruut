@@ -17,6 +17,7 @@
   "homepage": "https://github.com/jillix/engine-ruut",
   "main": "index.js",
   "dependencies": {
+    "libobject": "github:jillix/libobject",
     "ruut": "github:jillix/ruut.js"
   },
   "devDependencies": {},
