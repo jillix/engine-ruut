@@ -1,4 +1,5 @@
 var Ruut = require('ruut');
+var libob = require('libobject');
 
 exports.init = function (config, ready) {
 
@@ -12,15 +13,32 @@ exports.init = function (config, ready) {
 
     this.router = Ruut([config.home, config.routes]);
 
+    if (global.addEventListener) {
+        global.addEventListener("popstate", function () {
+            console.log(arguments);
+            //checkRoute.bind(self, null));
+        });
+    }
+
     ready();
 };
 
 exports.route = function (chain, options, onError) {
 
-    var route = this.router(options.req.url); 
+    console.log(options.url, options._);
+    var route = options.url || options._.url;
+    if (route instanceof Array) {
+        route.forEach(function (path) {
+            libob.path(path, options);
+        });
+        // .. get url form optioins path
+        route = route[0];
+    } 
+
+    route = this.router(route);
 
     if (route === null) {
-        route = {data: options.notFound || this._config.notFound || 'notFound'};
+        route = {data: options.notDefined || this._config.notDefined || 'notFound'};
     }
 
     if (!route.data) {
@@ -28,6 +46,11 @@ exports.route = function (chain, options, onError) {
     }
 
     options.params = route.params || {};
+
+    // update history if url is different
+    if (global.location && options.url !== global.location.pathname) {
+        global.history.pushState(0, 0, options.url);
+    }
 
     // create event stream and pipe it to the flow chain
     route = this.flow(route.data, options);
