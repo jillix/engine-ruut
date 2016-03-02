@@ -24,17 +24,9 @@ exports.init = function (config, ready) {
 };
 
 exports.route = function (chain, options, onError) {
+    libob.change(options._, options);
 
-    console.log(options.url, options._);
     var route = options.url || options._.url;
-    if (route instanceof Array) {
-        route.forEach(function (path) {
-            libob.path(path, options);
-        });
-        // .. get url form optioins path
-        route = route[0];
-    } 
-
     route = this.router(route);
 
     if (route === null) {
