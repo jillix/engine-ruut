@@ -3,15 +3,11 @@ var libob = require('libobject');
 
 exports.init = function (config, ready) {
 
-    if (!config.home) {
-        return ready(new Error('Flow-router.init: No default event event.'));
-    }
-
-    if (!config.routes) {
+    if (!config.routes || !config.routes[0]) {
         return ready(new Error('Flow-router.init: No routes in config.'));
     }
 
-    this.router = Ruut([config.home, config.routes]);
+    this.router = Ruut(config.routes);
 
     if (global.addEventListener) {
         global.addEventListener("popstate", function () {
