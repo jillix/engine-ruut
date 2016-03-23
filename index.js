@@ -19,10 +19,10 @@ exports.init = function (config, ready) {
     ready();
 };
 
-exports.route = function (chain, options, onError) {
+exports.route = function (options, stream) {
     libob.change(options._, options);
 
-    var route = options.url || options._.url;
+    var route = options.url = options.url || options._.url || (global.location ? global.location.pathname : '/');
     route = this.router(route);
 
     if (route === null) {
@@ -30,7 +30,7 @@ exports.route = function (chain, options, onError) {
     }
 
     if (!route.data) {
-        return chain.o.emit('error', new Error('Engine-ruut.route: No event found.'));
+        return stream.emit('error', new Error('Engine-ruut.route: No event found.'));
     }
 
     options.params = route.params || {};
@@ -42,7 +42,6 @@ exports.route = function (chain, options, onError) {
 
     // create event stream and pipe it to the flow chain
     route = this.flow(route.data, options);
-    route.o.on('error', onError);
-    chain.i.pipe(route.i);
-    route.o.pipe(chain.o);
+    route.end();
+    //return route;
 };
