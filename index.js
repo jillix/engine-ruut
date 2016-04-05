@@ -41,7 +41,5 @@ exports.route = function (options, stream) {
     }
 
     // create event stream and pipe it to the flow chain
-    route = this.flow(route.data, options);
-    route.end();
-    //return route;
+    return this.flow(route.data, options);
 };
