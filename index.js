@@ -9,13 +9,6 @@ exports.init = function (config, ready) {
 
     this.router = Ruut(config.routes);
 
-    if (global.addEventListener) {
-        global.addEventListener("popstate", function () {
-            console.log(arguments);
-            //checkRoute.bind(self, null));
-        });
-    }
-
     ready();
 };
 
@@ -34,11 +27,6 @@ exports.route = function (options, stream) {
     }
 
     options.params = route.params || {};
-
-    // update history if url is different
-    if (global.location && options.url !== global.location.pathname) {
-        global.history.pushState(0, 0, options.url);
-    }
 
     // create event stream and pipe it to the flow chain
     return this.flow(route.data, options);
