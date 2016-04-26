@@ -3,7 +3,7 @@ var libob = require('libobject');
 
 exports.init = function (config, ready) {
 
-    if (!config.routes || !config.routes[0]) {
+    if (!config.routes || typeof config.routes !== 'object') {
         return ready(new Error('Flow-router.init: No routes in config.'));
     }
 
@@ -13,8 +13,10 @@ exports.init = function (config, ready) {
 };
 
 exports.route = function (options, data, next) {
+    // define options
+    options.url = options._.url || options.url;
 
-    var route  = options.url || options._.url || (data ? (data.req ? data.req.url : data.url || data) : '/');
+    var route = data.url = data.url || options.url || (data.req ? data.req.url : '/');
 
     route = this.router(typeof route !== 'string' ? '/' : route);
     if (route === null) {
