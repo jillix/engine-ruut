@@ -1,93 +1,39 @@
-var Ruut = require("./lib/ruut");
-var Routes = require("./lib/routes");
+var Ruut = require('ruut');
+var libob = require('libobject');
 
-// default init options
-var defaultOptions = {
-    routes: {},
-    autocheck: true,
-    customData: {}
-};
-
-function routeDefOptions (options, data) {
-    var routeOptions = {
-        url: null,
-        noEmit: false
-    };
-
-    if (typeof data === "string") {
-        data.url = data;
-    }
-    if (typeof options === "string") {
-        options.url = options;
-    }
-
-    for (var option in routeOptions) {
-        var optionValue = options[option] || data[option];
-        routeOptions[option] = optionValue || routeOptions[option];
-    }
-
-    return routeOptions;
-}
-
-/**
- * Initialize the module.
- *
- * @private
- * @param {object} The config object.
- * @param {function} The ready function.
-*/
 exports.init = function (config, ready) {
-    var self = this;
 
-    // init streams
-    self._streams = {};
-
-    // define the config
-    Object.keys(defaultOptions).forEach(function (key) {
-        self._config[key] = self._config[key] || defaultOptions[key];
-    });
-
-    // initialize the routes
-    Routes.init.call(self);
-
-    // initialize the router
-    self.router = Ruut(self._config.routes);
-
-    global.addEventListener("popstate", Routes.check.bind(self, null));
-
-    // everything has been initialized
-    ready();
-
-    if (self._config.autocheck) {
-        Routes.check.call(self, null);
+    if (!config.routes || typeof config.routes !== 'object') {
+        return ready(new Error('Flow-router.init: No routes in config.'));
     }
+
+    this.router = Ruut(config.routes);
+
+    ready();
 };
 
-/**
- * Emit a new route
- *
- * @public
- * @param {object} The _options object.
- * @param {object} The data function.
- * @param {function} The next function.
-*/
-exports.route = function (_options, data, next) {
-    var self = this;
+exports.route = function (options, data, next) {
+    // define options
+    options.url = options._.url || options.url;
 
-    // get the route options
-    var options = routeDefOptions(_options, data);
+    var route = data.url = data.url || options.url || (data.req ? data.req.url : '/');
 
-    if (!options.url) {
-        return next(null, data);
+    route = this.router(typeof route !== 'string' ? '/' : route);
+    if (route === null) {
+        route = {data: options.notDefined || this._config.notDefined || 'notFound'};
     }
 
-    global.history.pushState(0, 0, options.url);
-
-    // do not emit the new route if noEmit option provided
-    if (options.noEmit) {
-        return next(null, data);
+    if (!route.data) {
+        return next(new Error('Engine-ruut.route: No event found.'));
     }
 
-    Routes.check.call(self);
+    if (typeof data !== 'object') {
+        data = {};
+    }
+    data.params = route.params || {};
+
+    // write to event stream
+    this.flow(route.data, options).write(data);
+
     next(null, data);
 };
