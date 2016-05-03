@@ -1,20 +1,20 @@
 {
-  "name": "engine-ruut",
+  "name": "flow-router",
   "version": "0.1.0",
-  "description": "Handle engine routes",
+  "description": "Handle routes in flow",
   "repository": {
     "type": "git",
     "url": "git://github.com/jillix/engine-ruut.git"
   },
   "keywords": [
-    "jxengine",
+    "flow",
     "routes"
   ],
   "author": "jillix",
   "bugs": {
-    "url": "https://github.com/jillix/engine-ruut/issues"
+    "url": "https://github.com/jillix/flow-router/issues"
   },
-  "homepage": "https://github.com/jillix/engine-ruut",
+  "homepage": "https://github.com/jillix/flow-router",
   "main": "index.js",
   "dependencies": {
     "libobject": "github:jillix/libobject",
