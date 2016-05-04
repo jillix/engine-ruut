@@ -2,25 +2,41 @@ var Ruut = require('ruut');
 var libob = require('libobject');
 
 exports.init = function (config, ready) {
+    var self = this;
 
-    if (!config.routes || typeof config.routes !== 'object') {
+    if (!config.routers || !libob.isObject(config.routers) || !Object.keys(config.routers).length) {
         return ready(new Error('Flow-router.init: No routes in config.'));
     }
 
-    this.router = Ruut(config.routes);
+    // init the routers
+    self._routers = {};
+    Object.keys(config.routers).forEach(function (router) {
+        self._routers[router] = Ruut(config.routers[router]);
+    });
 
     ready();
 };
 
-exports.route = function (options, data, next) {
+exports.route = function (_options, data, next) {
+    var self = this;
+
     // define options
-    options.url = options._.url || options.url;
+    var options = {
+        url: data.url || _options._.url || _options.url || (data.req ? data.req.url : '/'),
+        router: data.router || _options._.router || self._config.defaultRouter || 'main',
+        notDefined: data.notDefined || _options._.notDefined || self._config.notDefined || 'notFound'
+    };
 
-    var route = data.url = data.url || options.url || (data.req ? data.req.url : '/');
+    // specified router must exist;
+    if (!self._routers[options.router]) {
+        return next(new Error('Flow-router.route: Router "' + options.router + '" does not exist.'));
+    }
 
-    route = this.router(typeof route !== 'string' ? '/' : route);
+    var route = self._routers[options.router](typeof options.url === 'string' ? options.url : '/');
+
+    // 404
     if (route === null) {
-        route = {data: options.notDefined || this._config.notDefined || 'notFound'};
+        route = { data: options.notDefined };
     }
 
     if (!route.data) {
@@ -33,7 +49,7 @@ exports.route = function (options, data, next) {
     data.params = route.params || {};
 
     // write to event stream
-    this.flow(route.data, options).write(data);
+    self.flow(route.data, _options).write(data);
 
     next(null, data);
 };
