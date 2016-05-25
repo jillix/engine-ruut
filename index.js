@@ -24,7 +24,8 @@ exports.route = function (_options, data, next) {
     var options = {
         url: data.url || _options._.url || _options.url || (data.req ? data.req.url : '/'),
         router: data.router || _options._.router || self._config.defaultRouter || 'main',
-        notDefined: data.notDefined || _options._.notDefined || self._config.notDefined || 'notFound'
+        notDefined: data.notDefined || _options._.notDefined || self._config.notDefined || 'notFound',
+        end: data.end || _options._.end || false
     };
 
     // specified router must exist;
@@ -48,8 +49,15 @@ exports.route = function (_options, data, next) {
     }
     data.params = route.params || {};
 
-    // write to event stream
-    self.flow(route.data, _options).write(data);
+    // create stream
+    var stream = self.flow(route.data, _options);
+
+    // write data chunk or end with data chunk
+    if (options.end) {
+        stream.end(data);
+    } else {
+        stream.write(data);
+    }
 
     next(null, data);
 };
