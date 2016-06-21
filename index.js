@@ -28,6 +28,9 @@ exports.route = function (_options, data, next) {
         end: data.end || _options._.end || false
     };
 
+    // remove querystring from url
+    options.url = options.url.split(/[?#]/)[0];
+
     // specified router must exist;
     if (!self._routers[options.router]) {
         return next(new Error('Flow-router.route: Router "' + options.router + '" does not exist.'));
