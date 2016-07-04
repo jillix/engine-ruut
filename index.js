@@ -1,6 +1,12 @@
 var Ruut = require('ruut');
 var libob = require('libobject');
 
+/**
+ *  Initilizes module
+ *
+ *  @name init
+ *  @private
+ */
 exports.init = function (config, ready) {
     var self = this;
 
@@ -17,6 +23,20 @@ exports.init = function (config, ready) {
     ready();
 };
 
+/**
+ * Check if url path exist and emit flow event configured
+ *
+ * @name route
+ * @function
+ * @param {Object} options Object containig route options (can also be added in the data object)
+ *
+ *  - `url` (String):  The url that will be checked (required).
+ *  - `router` (String):  The name of the configured router that will be used to check the url. Default value can be configured (optional).
+ *  - `notDefined` (String):  What event to emit if route is not configured. Default value can be configured. (optional).
+ *  - `end` (Boolean):  End stream after event is emited (optional).
+ * @param {Object} data Object containig the route data
+ * @param {Function} next The next function.
+ */
 exports.route = function (_options, data, next) {
     var self = this;
 
