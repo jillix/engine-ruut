@@ -12,6 +12,11 @@
     "author": "jillix",
     "gitRepository": "git+https://github.com/jillix/flow-router.git",
     "exports": [
+        {
+            "@type": "DataHandler",
+            "name": "route",
+            "options": []
+        }
     ],
     "options": [
     ]
