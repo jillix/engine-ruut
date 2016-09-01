@@ -1,0 +1,32 @@
+{
+    "@context": [
+        "http://schema.jillix.net/context/module.jsonld",
+        {
+            "notDefined": "http://example.com/notDefined",
+            "defaultRouter": "http://example.com/defaultRouter",
+            "routers": "http://example.com/routers",
+            "main": "http://example.com/main",
+            "_i": "http://example.com/_i",
+            "_m": "http://example.com/_m",
+            "_c": "http://example.com/_c",
+            ":name": "http://example.com/:name"
+        }
+    ],
+    "@id": "https://raw.githubusercontent.com/jillix/flow-router/master/module.json",
+    "@type": "Module",
+    "name": "flow-router",
+    "version": "0.0.1",
+    "description": "Example module for flow",
+    "author": "jillix",
+    "gitRepository": "git+https://github.com/jillix/flow-router.git",
+    "exports": [
+        {
+            "@id": "https://raw.githubusercontent.com/jillix/flow-router/master/module.json#route",
+            "@type": "DataHandler",
+            "name": "route",
+            "args": []
+        }
+    ],
+    "args": [
+    ]
+}
