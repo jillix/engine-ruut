@@ -15,6 +15,7 @@ exports.init = function (config, ready) {
     }
 
     // init the routers
+    self._config = config;
     self._routers = {};
     Object.keys(config.routers).forEach(function (router) {
         self._routers[router] = Ruut(config.routers[router]);
@@ -37,16 +38,14 @@ exports.init = function (config, ready) {
  * @param {Object} data Object containig the route data
  * @param {Function} next The next function.
  */
-exports.route = function (_options, data, next) {
+exports.route = function (options, data, next) {
     var self = this;
 
     // define options
-    var options = {
-        url: data.url || _options._.url || _options.url || (data.req ? data.req.url : '/'),
-        router: data.router || _options._.router || self._config.defaultRouter || 'main',
-        notDefined: data.notDefined || _options._.notDefined || self._config.notDefined || 'notFound',
-        end: data.end || _options._.end || false
-    };
+    options.url = data.url || options.url || (data.req ? data.req.url : '/');
+    options.router = data.router || options.router || self._config.defaultRouter || 'main';
+    options.notDefined = data.notDefined || options.notDefined || self._config.notDefined || 'notFound';
+    options.end = data.end || options.end || false;
 
     // remove querystring from url
     options.url = options.url.split(/[?#]/)[0];
@@ -73,7 +72,7 @@ exports.route = function (_options, data, next) {
     data.params = route.params || {};
 
     // create stream
-    var stream = self.flow(route.data, _options);
+    var stream = self.flow(self._name + '/' + route.data, options);
 
     // write data chunk or end with data chunk
     if (options.end) {
