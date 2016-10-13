@@ -44,6 +44,7 @@ exports.route = function (options, data, next) {
     // define options
     options.url = data.url || options.url || (data.req ? data.req.url : '/');
     options.router = data.router || options.router || self._config.defaultRouter || 'main';
+    options.router = self._routers[options.router] ? options.router : (data.req ? data.req.method : 'main');
     options.notDefined = data.notDefined || options.notDefined || self._config.notDefined || 'notFound';
     options.end = data.end || options.end || false;
 
@@ -72,7 +73,7 @@ exports.route = function (options, data, next) {
     data.params = route.params || {};
 
     // create stream
-    var stream = self.flow(self._name + '/' + route.data, options);
+    var stream = self.flow(self._name + '/' + route.data);
 
     // write data chunk or end with data chunk
     if (options.end) {
