@@ -38,15 +38,18 @@ exports.init = function (config, ready) {
  * @param {Object} data Object containig the route data
  * @param {Function} next The next function.
  */
-exports.route = function (options, data, next) {
+exports.route = function (args, data, next) {
     var self = this;
 
     // define options
-    options.url = data.url || options.url || (data.req ? data.req.url : '/');
-    options.router = data.router || options.router || self._config.defaultRouter || 'main';
+    let options = {
+        url: data.url || args.url || (data.req ? data.req.url : '/'),
+        router: data.router || args.router || self._config.defaultRouter || 'main',
+        notDefined: data.notDefined || args.notDefined || self._config.notDefined || 'notFound',
+        end: data.end || args.end || false
+    };
+
     options.router = self._routers[options.router] ? options.router : (data.req ? data.req.method : 'main');
-    options.notDefined = data.notDefined || options.notDefined || self._config.notDefined || 'notFound';
-    options.end = data.end || options.end || false;
 
     // remove querystring from url
     options.url = options.url.split(/[?#]/)[0];
