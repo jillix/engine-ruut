@@ -76,7 +76,7 @@ exports.route = function (args, data, next) {
     data.params = route.params || {};
 
     // create stream
-    var stream = self.flow(self._name + '/' + route.data, {session: data.req.session});
+    var stream = self.flow(self._name + '/' + route.data);
 
     // write data chunk or end with data chunk
     if (options.end) {
