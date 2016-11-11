@@ -7,20 +7,18 @@ var libob = require('libobject');
  *  @name init
  *  @private
  */
-exports.init = function (config, ready) {
-    var self = this;
+exports.init = function (scope, inst, args, data, next) {
 
-    if (!config.routers || !libob.isObject(config.routers) || !Object.keys(config.routers).length) {
-        return ready(new Error('Flow-router.init: No routes in config.'));
+    if (!args.routers || !libob.isObject(args.routers) || !Object.keys(args.routers).length) {
+        return next(new Error('Flow-router.init: No routes in config.'));
     }
 
     // init the routers
-    self._routers = {};
-    Object.keys(config.routers).forEach(function (router) {
-        self._routers[router] = Ruut(config.routers[router]);
-    });
+    inst._config = args;
+    inst._routers = {};
+    Object.keys(args.routers).forEach(router => inst._routers[router] = Ruut(args.routers[router]));
 
-    ready();
+    next(null, data);
 };
 
 /**
@@ -37,26 +35,27 @@ exports.init = function (config, ready) {
  * @param {Object} data Object containig the route data
  * @param {Function} next The next function.
  */
-exports.route = function (_options, data, next) {
-    var self = this;
+exports.route = function (scope, inst, args, data, next) {
 
     // define options
-    var options = {
-        url: data.url || _options._.url || _options.url || (data.req ? data.req.url : '/'),
-        router: data.router || _options._.router || self._config.defaultRouter || 'main',
-        notDefined: data.notDefined || _options._.notDefined || self._config.notDefined || 'notFound',
-        end: data.end || _options._.end || false
+    let options = {
+        url: data.url || args.url || (data.req ? data.req.url : '/'),
+        router: data.router || args.router || inst._config.defaultRouter || 'main',
+        notDefined: data.notDefined || args.notDefined || inst._config.notDefined || 'notFound',
+        end: data.end || args.end || false
     };
+
+    options.router = inst._routers[options.router] ? options.router : (data.req ? data.req.method : 'main');
 
     // remove querystring from url
     options.url = options.url.split(/[?#]/)[0];
 
     // specified router must exist;
-    if (!self._routers[options.router]) {
+    if (!inst._routers[options.router]) {
         return next(new Error('Flow-router.route: Router "' + options.router + '" does not exist.'));
     }
 
-    var route = self._routers[options.router](typeof options.url === 'string' ? options.url : '/');
+    var route = inst._routers[options.router](typeof options.url === 'string' ? options.url : '/');
 
     // 404
     if (route === null) {
@@ -73,7 +72,7 @@ exports.route = function (_options, data, next) {
     data.params = route.params || {};
 
     // create stream
-    var stream = self.flow(route.data, _options);
+    var stream = scope.flow(inst._name + '/' + route.data);
 
     // write data chunk or end with data chunk
     if (options.end) {
