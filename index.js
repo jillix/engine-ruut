@@ -72,7 +72,6 @@ exports.route = function (scope, state, args, data, next) {
     data.params = route.params || {};
 
     // create stream
-    console.log('Flow-router.route:', route);
     var stream = scope.flow(route.data);
 
     // write data chunk or end with data chunk
