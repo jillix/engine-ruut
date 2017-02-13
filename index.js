@@ -7,7 +7,7 @@ var libob = require('libobject');
  *  @name init
  *  @private
  */
-exports.init = function (scope, state, args, data, next) {
+exports.init = function (scope, state, args, data, stream, next) {
 
     if (!args.routers || !libob.isObject(args.routers) || !Object.keys(args.routers).length) {
         return next(new Error('Flow-router.init: No routes in config.'));
@@ -35,7 +35,7 @@ exports.init = function (scope, state, args, data, next) {
  * @param {Object} data Object containig the route data
  * @param {Function} next The next function.
  */
-exports.route = function (scope, state, args, data, next) {
+exports.route = function (scope, state, args, data, stream, next) {
 
     // define options
     let options = {
@@ -71,15 +71,14 @@ exports.route = function (scope, state, args, data, next) {
     }
     data.params = route.params || {};
 
-    // create stream
-    var stream = scope.flow(route.data);
-
-    // write data chunk or end with data chunk
-    if (options.end) {
-        stream.end(data);
-    } else {
-        stream.write(data);
+    // call flow sequence
+    stream = stream.pipe(scope.flow(route.data, data, !!stream));
+    stream.done = next;
+    if (stream.writeable) {
+        if (options.end) {
+            stream.end(data);
+        } else {
+            stream.write(data);
+        }
     }
-
-    next(null, data);
 };
